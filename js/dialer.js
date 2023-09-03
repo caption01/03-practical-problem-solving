@@ -7,14 +7,21 @@ export default {
 
 // ****************************
 
-function reachableKeys(startingDigit) {
-	// TODO: return which digits a Knight's move
-	// can hop to from a given starting digit/key
-	//
-	// e.g. 3 -> [ 4, 8 ]
-	//      4 -> [ 3, 9, 0 ]
-	//      5 -> []
-	return [];
+var nearbyKeys = [
+	[4,6],
+	[6,8],
+	[7,9],
+	[4,8],
+	[3,9,0],
+	[],
+	[1,7,0],
+	[2,6],
+	[1,3],
+	[2,4]
+];
+
+function reachableKeys(startingDigit){
+	return nearbyKeys[startingDigit]
 }
 
 function countPaths(startingDigit,hopCount) {
