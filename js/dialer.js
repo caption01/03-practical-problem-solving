@@ -4,6 +4,8 @@ export default {
 	listAcyclicPaths
 };
 
+countPaths = memorize(countPaths)
+
 
 // ****************************
 
@@ -29,22 +31,49 @@ function countPaths(startingDigit,hopCount) {
 
 	var pathCount = 0;
 
-	for (let key of nearbyKeys[startingDigit]) {
-		pathCount += countPaths(key, hopCount - 1)
+	for (let digit of nearbyKeys[startingDigit]) {
+		pathCount += countPaths(digit, hopCount - 1)
 	}
 
 	return pathCount
 }
 
 function listAcyclicPaths(startingDigit) {
-	// TODO: given the digit/key to start from,
-	// return a list of the distinct acyclic
-	// paths that are possible to traverse
-	//
-	// e.g. [
-	//   [4, 3, 8, 1, 6, 7, 2, 9],
-	//   [4, 3, 8, 1, 6, 0],
-	//   ...
-	// ]
-	return [];
+	var paths = [];
+	var nextHops = nearbyKeys[startingDigit];
+	for (let nextHop of nextHops) {
+		let path = [startingDigit, nextHop];
+		followPath(path, paths)
+	}
+
+	return paths;
+}
+
+function followPath(path, paths){
+	var nextHops = nearbyKeys[path[path.length - 1]]
+	var pathForwardFound = false;
+
+	for (let nextHop of nextHops) {
+		if (!path.includes(nextHop)) {
+			pathForwardFound = true;
+			let nextPath = [...path, nextHop]
+			followPath(nextPath, paths)
+		}
+	}
+
+	if (!pathForwardFound) {
+		paths.push(path)
+	}
+}
+
+function memorize(fn){
+	var cache = {};
+
+	return function memoized(start, length) {
+		if (!cache[`${start}:${length}`]) {
+			cache[`${start}:${length}`] = fn(start, length)
+		}
+
+		return cache[`${start}:${length}`]
+	}
 }
