@@ -4,8 +4,6 @@ export default {
 	listAcyclicPaths
 };
 
-countPaths = memorize(countPaths)
-
 
 // ****************************
 
@@ -29,13 +27,21 @@ function reachableKeys(startingDigit){
 function countPaths(startingDigit,hopCount) {
 	if (hopCount == 0) return 1
 
-	var pathCount = 0;
+	var priorPathCounts = Array(10).fill(1);
 
-	for (let digit of nearbyKeys[startingDigit]) {
-		pathCount += countPaths(digit, hopCount - 1)
+	for (let hops = 0; hops < hopCount; hops++) {
+		let pathCounts = Array(10).fill(0);
+		
+		for (let digit = 0; digit <= 9; digit++) {
+			for (let n of nearbyKeys[digit]) {
+				pathCounts[digit] += priorPathCounts[n]
+			}
+		}
+
+		priorPathCounts = pathCounts;
 	}
 
-	return pathCount
+	return priorPathCounts[startingDigit]
 }
 
 function listAcyclicPaths(startingDigit) {
@@ -66,14 +72,3 @@ function followPath(path, paths){
 	}
 }
 
-function memorize(fn){
-	var cache = {};
-
-	return function memoized(start, length) {
-		if (!cache[`${start}:${length}`]) {
-			cache[`${start}:${length}`] = fn(start, length)
-		}
-
-		return cache[`${start}:${length}`]
-	}
-}
